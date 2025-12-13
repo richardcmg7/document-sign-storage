@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.env*
+sc/lib/
+sc/out/
+sc/cache/
+sc/broadcast/
+.DS_Store
+*.log
+.idea/
+.vscode/
+dist/
+build/
+coverage/
+.dapp/
+dapp/.env*
