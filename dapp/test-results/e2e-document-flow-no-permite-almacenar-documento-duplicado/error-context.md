@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "DocuChain Blockchain Document Verification" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - heading "DocuChain" [level=1] [ref=e10]
+          - paragraph [ref=e11]: Blockchain Document Verification
+      - navigation [ref=e12]:
+        - link "Upload & Sign" [ref=e13] [cursor=pointer]:
+          - /url: /upload
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic [ref=e17]: Upload & Sign
+        - link "Verify" [ref=e18] [cursor=pointer]:
+          - /url: /verify
+          - generic [ref=e19]:
+            - img [ref=e20]
+            - generic [ref=e22]: Verify
+        - link "History" [ref=e23] [cursor=pointer]:
+          - /url: /history
+          - generic [ref=e24]:
+            - img [ref=e25]
+            - generic [ref=e27]: History
+  - main [ref=e28]:
+    - main [ref=e29]:
+      - heading "Upload & Sign Document" [level=1] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: Drop your file here or browse
+              - paragraph [ref=e41]: PDF, DOC, TXT, or any file type
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - img [ref=e46]
+              - generic [ref=e48]:
+                - paragraph [ref=e49]: sample.txt
+                - paragraph [ref=e50]: 0.04 KB
+            - generic [ref=e51]: Ready
+          - generic [ref=e53]:
+            - img [ref=e55]
+            - generic [ref=e57]:
+              - paragraph [ref=e58]: Document Hash (Keccak256)
+              - paragraph [ref=e59]: "0x97dae00007a0602afca5622c684154f259a4207b737ba8da7682685c5b1547c1"
+        - generic [ref=e60]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - img [ref=e65]
+              - generic [ref=e67]:
+                - paragraph [ref=e68]: Signer Address
+                - paragraph [ref=e69]: 0xf39Fd6e5...fFb92266
+            - button "Copy address" [ref=e70] [cursor=pointer]:
+              - img [ref=e71]
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - img [ref=e77]
+              - generic [ref=e79]:
+                - paragraph [ref=e80]: Digital Signature (ECDSA)
+                - paragraph [ref=e81]: "0x0eece73efc42ce8e2e8303972f64d120fa4579d515d74f2560fd9f51173bda77327e492cf43579035b61df5dc30b8eeb8b5914d6f90110f84f895f5997b74d041c"
+            - button "Store on Blockchain" [ref=e82] [cursor=pointer]:
+              - img [ref=e83]
+              - generic [ref=e85]: Store on Blockchain
+          - paragraph [ref=e87]: ⚠️ This document has already been stored on the blockchain.
+  - contentinfo [ref=e88]:
+    - generic [ref=e90]:
+      - paragraph [ref=e91]: © 2024 DocuChain. Powered by Ethereum Blockchain.
+      - generic [ref=e93]: Connected to Anvil
+  - alert [ref=e95]
+```
