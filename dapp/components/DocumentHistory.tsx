@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useContract } from '../hooks/useContract';
+import { ethers } from 'ethers'; // Import ethers for type checking
 
 export default function DocumentHistory() {
   const { getDocumentCount, getDocumentHashByIndex, getDocumentInfo } = useContract();
@@ -11,24 +12,50 @@ export default function DocumentHistory() {
     const fetchDocs = async () => {
       try {
         setLoading(true);
-        const count = await getDocumentCount();
+        setError(''); // Clear previous errors
+
+        const countBigInt = await getDocumentCount();
+        const count = Number(countBigInt); // Convert BigInt to Number for iteration
+        console.log('Fetched document count:', count);
+
         const docs = [];
         for (let i = 0; i < count; i++) {
           const hash = await getDocumentHashByIndex(i);
-          const info = await getDocumentInfo(hash);
-          console.log('Hash:', hash, 'Info:', info);
-          docs.push({ hash, info });
+          console.log(`Fetched hash for index ${i}:`, hash);
+
+          // Only fetch info if hash is valid (not 0x00...00)
+          if (hash && hash !== ethers.ZeroHash) {
+            const info = await getDocumentInfo(hash);
+            console.log('Fetched info for hash:', hash, 'Info:', info);
+
+            // Ensure info has expected properties/indices
+            // Ethers.js typically returns struct fields as both array-like and named properties
+            if (info && info.signer && info.timestamp && info.signature) {
+              docs.push({
+                hash: hash,
+                signer: info.signer,
+                timestamp: info.timestamp,
+                signature: info.signature,
+                // Also keep the raw info if needed for debugging or display
+                rawInfo: info 
+              });
+            } else {
+              console.warn('Incomplete info received for hash:', hash, info);
+            }
+          } else {
+            console.warn(`Invalid hash received for index ${i}:`, hash);
+          }
         }
         setDocuments(docs);
       } catch (err: any) {
-        setError('Error loading history: ' + (err?.message || err));
+        setError('Error loading history: ' + (err?.message || err.toString()));
         console.error('Error al cargar historial:', err);
       } finally {
         setLoading(false);
       }
     };
     fetchDocs();
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   if (loading) {
     return (
@@ -132,11 +159,11 @@ export default function DocumentHistory() {
                   </p>
                   <div className="flex items-center space-x-2">
                     <p className="text-xs font-mono text-gray-900 truncate">
-                      {doc.info[2].slice(0, 10)}...{doc.info[2].slice(-6)}
+                      {doc.signer.slice(0, 10)}...{doc.signer.slice(-6)}
                     </p>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText(doc.info[2]);
+                        navigator.clipboard.writeText(doc.signer);
                         alert('Address copied!');
                       }}
                       className="text-blue-600 hover:text-blue-700"
@@ -158,7 +185,7 @@ export default function DocumentHistory() {
                     Timestamp
                   </p>
                   <p className="text-xs text-gray-900">
-                    {new Date(Number(doc.info[1])).toLocaleString()}
+                    {new Date(Number(doc.timestamp)).toLocaleString()}
                   </p>
                 </div>
 
@@ -171,7 +198,7 @@ export default function DocumentHistory() {
                     Signature
                   </p>
                   <p className="text-xs font-mono text-gray-900 truncate">
-                    {doc.info[3]?.slice(0, 20)}...
+                    {doc.signature?.slice(0, 20)}...
                   </p>
                 </div>
               </div>

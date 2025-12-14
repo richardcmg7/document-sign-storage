@@ -7,12 +7,19 @@ import { useMemo } from 'react';
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
 const fallbackProvider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
+// DEBUG LOGS
+console.log('--- useContract Config ---');
+console.log('Contract Address:', contractAddress);
+console.log('RPC URL:', process.env.NEXT_PUBLIC_RPC_URL);
+console.log('--------------------------');
+
 export function useContract() {
   const { provider: walletProvider, getSigner } = useMetaMask();
 
   const contract = useMemo(() => {
     // Priority to wallet provider (MetaMask) if available to ensure we are on the same network
     const p = walletProvider || fallbackProvider;
+    console.log('Using provider:', walletProvider ? 'MetaMask (Wallet)' : 'Fallback (RPC)');
     return new ethers.Contract(contractAddress, abi.abi, p);
   }, [walletProvider]);
 
