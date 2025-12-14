@@ -1,121 +1,95 @@
 # Document Sign Storage DApp
 
-Una aplicación descentralizada (DApp) para firmar, almacenar y verificar documentos digitalmente utilizando Blockchain (Ethereum/Foundry) y Next.js.
+Una aplicación descentralizada (DApp) para firmar, almacenar y verificar documentos digitalmente.
+
+**Importante**: Esta aplicación está diseñada para funcionar localmente usando **Anvil** como blockchain de prueba.
 
 ## 📋 Características
 
-- **Firma de Documentos**: Sube un documento y fírmalo digitalmente usando tu billetera MetaMask.
-- **Registro Inmutable**: El hash del documento y la firma se almacenan en la blockchain.
-- **Verificación**: Cualquiera puede verificar la autenticidad de un documento y quién lo firmó subiendo el archivo original.
-- **Historial**: Visualiza los documentos firmados por tu dirección.
+- **Firma de Documentos**: Sube un documento y fírmalo digitalmente.
+- **Registro Inmutable**: Almacena el hash del documento en la blockchain local.
+- **Verificación**: Verifica la autenticidad y el firmante de cualquier documento.
 
-## 🛠️ Tecnologías
+## 🛠️ Requisitos
 
-- **Smart Contract**: Solidity, Foundry (Forge/Anvil).
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS.
-- **Interacción Blockchain**: Ethers.js v6.
-- **Testing**: Foundry (Unit), Playwright (E2E).
+1.  **Foundry (Anvil)**: Para ejecutar la blockchain local.
+    *   [Instalar Foundry](https://getfoundry.sh/)
+2.  **Node.js**: Para ejecutar el frontend (v18+).
+3.  **MetaMask**: Billetera en el navegador para firmar las transacciones.
+    *   *Nota: Debes configurarlo para conectarse a `Localhost 8545`.*
 
-## 🚀 Requisitos Previos
+## ⚡ Guía de Puesta en Marcha (Paso a Paso)
 
-- [Node.js](https://nodejs.org/) (v18 o superior)
-- [Foundry](https://getfoundry.sh/) (Forge & Anvil)
-- [MetaMask](https://metamask.io/) (Extensión de navegador)
+Sigue estos pasos en orden exacto para levantar el entorno completo.
 
-## 📦 Instalación y Configuración
-
-### 1. Clonar el repositorio
-```bash
-git clone https://github.com/richardcmg7/document-sign-storage.git
-cd document-sign-storage
-```
-
-### 2. Configurar Smart Contracts (Backend)
-
-Inicia la blockchain local y despliega el contrato.
+### 1. Iniciar Blockchain Local (Terminal 1)
+Inicia Anvil para tener una red Ethereum corriendo en tu máquina. Mantén esta terminal abierta.
 
 ```bash
-# Entrar al directorio de contratos
 cd sc
-
-# Instalar dependencias
-forge install
-
-# Compilar contratos
-forge build
-
-# Iniciar nodo local (Anvil) en una terminal nueva
 anvil
 ```
+*Copia una de las "Private Keys" que muestra Anvil e impórtala en tu MetaMask para tener fondos.*
 
-**Nota**: Al iniciar `anvil`, verás una lista de cuentas y claves privadas. Y la URL RPC local: `http://127.0.0.1:8545`.
-
-En **otra terminal**, despliega el contrato a la red local:
+### 2. Desplegar el Contrato (Terminal 2)
+Necesitamos "subir" el contrato inteligente a nuestra red local (Anvil).
 
 ```bash
 cd sc
 forge script script/Deploy.s.sol:DeployScript --rpc-url http://127.0.0.1:8545 --broadcast
 ```
 
-Copia la dirección del contrato desplegado (`Contract Address`) que aparece en la salida.
+🛑 **¡ALTO!** Copia la dirección que aparece al final de la salida:
+`Contract Address: 0x...` (La necesitarás en el paso 3).
 
-### 3. Configurar Frontend (DApp)
+### 3. Configurar Frontend (Terminal 2)
+Dile a la aplicación dónde está el contrato.
 
 ```bash
-# Entrar al directorio de la dApp
 cd ../dapp
-
-# Instalar dependencias
-npm install
+cp .env.example .env.local  # O crea el archivo manualmente
 ```
 
-Crea un archivo `.env.local` en `dapp/` con la siguiente configuración:
-
+Edita el archivo `.env.local`:
 ```env
 NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8545
 NEXT_PUBLIC_CONTRACT_ADDRESS=<PEGAR_DIRECCION_DEL_CONTRATO_AQUI>
 ```
 
-### 4. Ejecutar la Aplicación
+### 4. Ejecutar la Aplicación (Terminal 2)
+Instala las dependencias y arranca el servidor web.
 
 ```bash
+npm install
 npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-## 🧪 Testing
+---
 
-### Smart Contracts (Unit Tests)
+## 🔧 Configuración de MetaMask (Para pruebas manuales)
+
+Para que la app funcione en el navegador:
+1.  Abre MetaMask.
+2.  Agrega una red manualmente (si no aparece "Localhost 8545"):
+    *   **Nombre**: Anvil Local
+    *   **RPC URL**: `http://127.0.0.1:8545`
+    *   **Chain ID**: `31337`
+    *   **Símbolo**: ETH
+3.  Importa una cuenta usando una de las **Private Keys** que mostró Anvil al iniciarse.
+
+## 🧪 Ejecutar Tests
+
+### Tests del Contrato (Solidity)
 ```bash
 cd sc
 forge test
 ```
 
-### Frontend (E2E Tests)
-*Nota: Requiere que la DApp esté corriendo en localhost:3000 y Anvil en puerto 8545.*
-
+### Tests de la Aplicación (E2E)
+*Requiere que la app esté corriendo en localhost:3000 y Anvil en puerto 8545.*
 ```bash
 cd dapp
 npm run e2e
 ```
-
-## 📂 Estructura del Proyecto
-
-```
-document-sign-storage/
-├── sc/                 # Smart Contracts (Foundry)
-│   ├── src/            # Código fuente Solidity
-│   ├── test/           # Tests del contrato
-│   └── script/         # Scripts de despliegue
-└── dapp/               # Frontend (Next.js)
-    ├── app/            # Páginas y rutas
-    ├── components/     # Componentes React (Uploader, Signer, Verifier)
-    ├── hooks/          # Hooks personalizados (useContract)
-    ├── contexts/       # Contexto global (MetaMask)
-    └── e2e/            # Tests End-to-End (Playwright)
-```
-
-## 📝 Estado del Proyecto
-
-Consulta [PROJECT_STATUS.md](./PROJECT_STATUS.md) para ver el detalle del progreso, funcionalidades implementadas y tareas pendientes.
