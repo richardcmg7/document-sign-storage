@@ -1,16 +1,25 @@
+# Dependencies
 node_modules/
-.next/
-.env*
 sc/lib/
-sc/out/
-sc/cache/
-sc/broadcast/
-.DS_Store
-*.log
-.idea/
-.vscode/
+
+# Framework/Build Artifacts
+.next/
 dist/
 build/
 coverage/
 .dapp/
+
+# Foundry Artifacts (Ignore everywhere)
+out/
+cache/
+broadcast/
+
+# Environment Variables
+.env*
 dapp/.env*
+
+# IDE/System
+.DS_Store
+*.log
+.idea/
+.vscode/

@@ -1,119 +1,121 @@
 # Document Sign Storage DApp
 
-Una aplicación descentralizada (DApp) para firmar, almacenar y verificar documentos digitalmente.
-
-**Importante**: Esta aplicación está diseñada para funcionar localmente usando **Anvil** como blockchain de prueba.
+Una aplicación descentralizada (DApp) para firmar, almacenar y verificar documentos digitalmente en la Blockchain.
 
 ## 📋 Características
 
-- **Firma de Documentos**: Sube un documento y fírmalo digitalmente.
-- **Registro Inmutable**: Almacena el hash del documento en la blockchain local.
-- **Verificación**: Verifica la autenticidad y el firmante de cualquier documento.
+- **Firma Digital**: Sube documentos y fírmalos criptográficamente con tu billetera (MetaMask).
+- **Inmutabilidad**: El hash del documento y la firma quedan registrados permanentemente en la blockchain.
+- **Verificación Pública**: Cualquiera puede verificar la autenticidad y el firmante de un documento original.
+- **Historial**: Visualiza todos los documentos firmados y almacenados.
 
-## 🛠️ Requisitos
+## 🛠️ Tecnologías
 
-1.  **Foundry (Anvil)**: Para ejecutar la blockchain local.
-    *   [Instalar Foundry](https://getfoundry.sh/)
-2.  **Node.js**: Para ejecutar el frontend (v18+).
-3.  **MetaMask**: Billetera en el navegador para firmar las transacciones.
-    *   *Nota: Debes configurarlo para conectarse a `Localhost 8545`.*
+- **Blockchain**: Solidity, Foundry (Forge/Anvil).
+- **Frontend**: Next.js 14, React, Tailwind CSS, Ethers.js v6.
+- **Redes Soportadas**: Localhost (Anvil), Ethereum Sepolia (Testnet).
 
-## ⚡ Guía de Puesta en Marcha (Paso a Paso)
+## 🚀 Guía de Inicio Rápido (Local - Anvil)
 
-Sigue estos pasos en orden exacto para levantar el entorno completo.
+Ideal para desarrollo y pruebas rápidas sin costo.
 
-### 1. Iniciar Blockchain Local (Terminal 1)
-Inicia Anvil para tener una red Ethereum corriendo en tu máquina. Mantén esta terminal abierta.
+### 1. Requisitos Previos
+- [Node.js](https://nodejs.org/) (v18+)
+- [Foundry](https://getfoundry.sh/)
+- [MetaMask](https://metamask.io/) configurado.
 
+### 2. Iniciar Blockchain Local
+Abra una terminal y ejecuta:
 ```bash
 cd sc
 anvil
 ```
-*Copia una de las "Private Keys" que muestra Anvil e impórtala en tu MetaMask para tener fondos.*
+*Mantén esta terminal abierta.*
 
-### 2. Desplegar el Contrato (Terminal 2)
-Necesitamos "subir" el contrato inteligente a nuestra red local (Anvil).
-
+### 3. Desplegar Contrato
+En una **segunda terminal**:
 ```bash
 cd sc
 forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
+⚠️ **COPIA** la `Contract Address` que aparece al final (ej: `0x5FbDB...`).
 
-🛑 **¡ALTO!** Copia la dirección que aparece al final de la salida:
-`Contract Address: 0x...` (La necesitarás en el paso 3).
-
-### 3. Configurar Frontend (Terminal 2)
-Dile a la aplicación dónde está el contrato.
-
+### 4. Configurar Frontend
 ```bash
 cd ../dapp
-cp .env.example .env.local  # O crea el archivo manualmente
+cp .env.example .env.local
 ```
-
-Edita el archivo `.env.local`:
+Edita `.env.local` con la dirección copiada:
 ```env
-NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8545
-NEXT_PUBLIC_CONTRACT_ADDRESS=<PEGAR_DIRECCION_DEL_CONTRATO_AQUI>
+NEXT_PUBLIC_RPC_URL=http://localhost:8545
+NEXT_PUBLIC_CONTRACT_ADDRESS=<PEGAR_DIRECCION_AQUI>
 ```
 
-### 4. Ejecutar la Aplicación (Terminal 2)
-Instala las dependencias y arranca el servidor web.
-
+### 5. Ejecutar App
 ```bash
 npm install
 npm run dev
 ```
-
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+Abre [http://localhost:3000](http://localhost:3000).
+*Configura MetaMask en la red `Localhost 8545` e importa una cuenta de Anvil.*
 
 ---
 
 ## 🌍 Despliegue en Testnet (Sepolia)
 
-Si deseas probar la aplicación en una red pública real:
+Para hacer tu aplicación pública en Internet.
 
-1.  **Desplegar Contrato**:
-    ```bash
-    cd sc
-    forge script script/Deploy.s.sol:DeployScript \
-      --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
-      --broadcast \
-      --legacy \
-      --private-key <TU_CLAVE_PRIVADA_SEPOLIA>
-    ```
+### 1. Conseguir Sepolia ETH
+Necesitas fondos de prueba. Usa un "Faucet" (ej: Google "Sepolia Faucet") para conseguir ETH gratis en tu billetera.
 
-2.  **Configurar Frontend**:
-    Actualiza `dapp/.env.local`:
-    ```env
-    NEXT_PUBLIC_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
-    NEXT_PUBLIC_CONTRACT_ADDRESS=<NUEVA_DIRECCION_DEL_CONTRATO>
-    ```
+### 2. Desplegar en Sepolia
+Ejecuta desde `sc/`:
+```bash
+forge script script/Deploy.s.sol:DeployScript \
+  --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
+  --broadcast \
+  --legacy \
+  --private-key <TU_CLAVE_PRIVADA_REAL>
+```
+*Nota: Nunca compartas tu clave privada.*
 
-3.  **Reiniciar**: `npm run dev`.
+### 3. Configurar Frontend
+Actualiza `dapp/.env.local`:
+```env
+NEXT_PUBLIC_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+NEXT_PUBLIC_CONTRACT_ADDRESS=<NUEVA_DIRECCION_DE_SEPOLIA>
+```
+
+### 4. Reiniciar y Usar
+Reinicia el servidor (`npm run dev`) y asegúrate de que **MetaMask esté conectado a la red Sepolia**.
 
 ---
 
-## 🔧 Configuración de MetaMask (Para pruebas manuales)
+## ❓ Solución de Problemas Comunes
 
-Para que la app funcione en el navegador:
-1.  Abre MetaMask.
-2.  Agrega una red manualmente (si no aparece "Localhost 8545"):
-    *   **Nombre**: Anvil Local
-    *   **RPC URL**: `http://127.0.0.1:8545`
-    *   **Chain ID**: `31337`
-    *   **Símbolo**: ETH
-3.  Importa una cuenta usando una de las **Private Keys** que mostró Anvil al iniciarse.
+### Error: `could not decode result data (value="0x", code=BAD_DATA)`
+*   **Causa**: Estás intentando leer el contrato desde la red equivocada.
+*   **Solución**: Revisa tu MetaMask. Si desplegaste en Sepolia, **MetaMask debe estar en Sepolia**. Si está en Ethereum Mainnet o Localhost, fallará porque no encuentra el contrato en esa red.
 
-## 🧪 Ejecutar Tests
+### Error: `Insufficient funds` en Localhost
+*   **Causa**: MetaMask tiene un historial de transacciones desincronizado con Anvil (Nonce mismatch).
+*   **Solución**: En MetaMask, ve a **Configuración > Avanzado > Borrar datos de la pestaña de actividad** (Reset Account). Esto no borra fondos, solo reinicia el historial local.
 
-### Tests del Contrato (Solidity)
+### La transacción falla en MetaMask (Localhost)
+*   **Causa**: Estás usando una cuenta sin fondos o la red incorrecta.
+*   **Solución**: Asegúrate de importar una de las claves privadas que imprime `anvil` al iniciarse (tienen 10,000 ETH de prueba).
+
+---
+
+## 🧪 Testing
+
+### Smart Contracts
 ```bash
 cd sc
 forge test
 ```
 
-### Tests de la Aplicación (E2E)
-*Requiere que la app esté corriendo en localhost:3000 y Anvil en puerto 8545.*
+### Frontend (E2E)
 ```bash
 cd dapp
 npm run e2e
