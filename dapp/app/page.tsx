@@ -1,6 +1,5 @@
 
 'use client';
-import { MetaMaskProvider } from '../contexts/MetaMaskContext';
 import FileUploader from '../components/FileUploader';
 import DocumentSigner from '../components/DocumentSigner';
 import DocumentVerifier from '../components/DocumentVerifier';
@@ -12,7 +11,7 @@ export default function HomePage() {
   const [hash, setHash] = useState<string>('');
 
   return (
-    <MetaMaskProvider>
+    <>
       {/* Hero Section */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -154,6 +153,6 @@ export default function HomePage() {
           <p className="text-sm text-gray-600">Verify document authenticity in seconds with hash comparison.</p>
         </div>
       </div>
-    </MetaMaskProvider>
+    </>
   );
 }

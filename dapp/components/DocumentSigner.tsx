@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useMetaMask } from '../contexts/MetaMaskContext';
 import { useContract } from '../hooks/useContract';
+import { ethers } from 'ethers';
 
 export default function DocumentSigner({ hash }: { hash: string }) {
-  const { signMessage, address } = useMetaMask();
+  const { getSigner, address } = useMetaMask();
   const { storeDocumentHash } = useContract();
   const [signature, setSignature] = useState<string>('');
   const [status, setStatus] = useState<string>('');
@@ -17,10 +18,16 @@ export default function DocumentSigner({ hash }: { hash: string }) {
     setLoading(true);
     setStatus('Signing document...');
     try {
-      const sig = await signMessage(hash);
+      const signer = await getSigner();
+      if (!signer) throw new Error("Wallet not connected");
+
+      // Sign the hash string (standard personal_sign)
+      const sig = await signer.signMessage(hash);
+      
       setSignature(sig);
       setStatus('✅ Signature generated successfully!');
     } catch (error: any) {
+      console.error(error);
       setStatus('❌ Error signing: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);

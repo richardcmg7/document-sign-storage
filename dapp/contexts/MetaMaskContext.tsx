@@ -1,57 +1,114 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+'use client';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { ethers } from 'ethers';
 
-const ANVIL_MNEMONIC = process.env.NEXT_PUBLIC_MNEMONIC || '';
-const ANVIL_WALLETS = Array.from({ length: 10 }, (_, i) => {
-  const path = `m/44'/60'/0'/0/${i}`;
-  const wallet = ethers.HDNodeWallet.fromPhrase(ANVIL_MNEMONIC, undefined, path);
-  return { address: wallet.address, privateKey: wallet.privateKey };
-});
-
-const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
+// Extend window interface to include ethereum
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 interface MetaMaskContextProps {
-  currentWallet: number;
-  address: string;
-  connect: (walletIndex: number) => void;
+  address: string | null;
+  isConnected: boolean;
+  chainId: string | null;
+  connect: () => Promise<void>;
   disconnect: () => void;
-  signMessage: (message: string) => Promise<string>;
-  getSigner: () => ethers.Wallet;
-  switchWallet: (walletIndex: number) => void;
+  getSigner: () => Promise<ethers.JsonRpcSigner | null>;
+  provider: ethers.BrowserProvider | null;
 }
 
 const MetaMaskContext = createContext<MetaMaskContextProps | undefined>(undefined);
 
 export function MetaMaskProvider({ children }: { children: ReactNode }) {
-  const [currentWallet, setCurrentWallet] = useState(0);
-  const [address, setAddress] = useState(ANVIL_WALLETS[0].address);
+  const [address, setAddress] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [chainId, setChainId] = useState<string | null>(null);
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
 
-  const connect = (walletIndex: number) => {
-    setCurrentWallet(walletIndex);
-    setAddress(ANVIL_WALLETS[walletIndex].address);
-  };
+  // Initialize provider and check connection on mount
+  useEffect(() => {
+    if (typeof window.ethereum !== 'undefined') {
+      const browserProvider = new ethers.BrowserProvider(window.ethereum);
+      setProvider(browserProvider);
 
-  const disconnect = () => {
-    setCurrentWallet(0);
-    setAddress('');
-  };
+      // Check if already connected
+      browserProvider.listAccounts().then(accounts => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0].address);
+          setIsConnected(true);
+        }
+      });
 
-  const getSigner = () => {
-    return new ethers.Wallet(ANVIL_WALLETS[currentWallet].privateKey, provider);
-  };
+      // Get chain ID
+      window.ethereum.request({ method: 'eth_chainId' }).then((id: string) => {
+        setChainId(id);
+      });
 
-  const signMessage = async (message: string) => {
-    const signer = getSigner();
-    return await signer.signMessage(message);
-  };
+      // Event Listeners
+      const handleAccountsChanged = (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0]);
+          setIsConnected(true);
+        } else {
+          setAddress(null);
+          setIsConnected(false);
+        }
+      };
 
-  const switchWallet = (walletIndex: number) => {
-    setCurrentWallet(walletIndex);
-    setAddress(ANVIL_WALLETS[walletIndex].address);
-  };
+      const handleChainChanged = (newChainId: string) => {
+        setChainId(newChainId);
+        window.location.reload(); // Recommended by MetaMask
+      };
+
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+          window.ethereum.removeListener('chainChanged', handleChainChanged);
+        }
+      };
+    }
+  }, []);
+
+  const connect = useCallback(async () => {
+    if (!provider) return;
+    try {
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const addr = await signer.getAddress();
+      setAddress(addr);
+      setIsConnected(true);
+    } catch (error) {
+      console.error("Error connecting to MetaMask:", error);
+    }
+  }, [provider]);
+
+  const disconnect = useCallback(() => {
+    // MetaMask doesn't strictly support "disconnect" from DApp side, 
+    // but we can clear local state
+    setAddress(null);
+    setIsConnected(false);
+  }, []);
+
+  const getSigner = useCallback(async () => {
+    if (!provider) return null;
+    return await provider.getSigner();
+  }, [provider]);
 
   return (
-    <MetaMaskContext.Provider value={{ currentWallet, address, connect, disconnect, signMessage, getSigner, switchWallet }}>
+    <MetaMaskContext.Provider value={{ 
+      address, 
+      isConnected, 
+      chainId, 
+      connect, 
+      disconnect, 
+      getSigner,
+      provider 
+    }}>
       {children}
     </MetaMaskContext.Provider>
   );

@@ -1,17 +1,37 @@
+'use client';
 import { useMetaMask } from '../contexts/MetaMaskContext';
 import { ethers } from 'ethers';
 import abi from '../abi/DocumentRegistry.json';
+import { useMemo } from 'react';
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
-const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
+const fallbackProvider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
 export function useContract() {
-  const { getSigner } = useMetaMask();
-  const contract = new ethers.Contract(contractAddress, abi.abi, provider);
+  const { provider: walletProvider, getSigner } = useMetaMask();
 
-  const storeDocumentHash = async (hash: string, timestamp: number, signature: string, signer: string) => {
-    const walletSigner = getSigner();
-    const tx = await contract.connect(walletSigner).storeDocumentHash(hash, timestamp, signature, signer);
+  const contract = useMemo(() => {
+    // If wallet is connected, use the browser provider (allows signing)
+    // Otherwise use fallback provider (read-only)
+    const p = walletProvider || fallbackProvider;
+    return new ethers.Contract(contractAddress, abi.abi, p);
+  }, [walletProvider]);
+
+  const storeDocumentHash = async (hash: string, timestamp: number, signature: string, signerAddress: string) => {
+    const signer = await getSigner();
+    if (!signer) throw new Error("Wallet not connected");
+    
+    // Connect the signer to the contract to enable write operations
+    const contractWithSigner = contract.connect(signer) as ethers.Contract;
+    
+    // Add manual gas limit to avoid estimation errors on local networks
+    const tx = await contractWithSigner.storeDocumentHash(
+      hash, 
+      timestamp, 
+      signature, 
+      signerAddress,
+      { gasLimit: 500000 }
+    );
     await tx.wait();
     return tx;
   };
