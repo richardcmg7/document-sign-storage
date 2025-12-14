@@ -11,8 +11,7 @@ export function useContract() {
   const { provider: walletProvider, getSigner } = useMetaMask();
 
   const contract = useMemo(() => {
-    // If wallet is connected, use the browser provider (allows signing)
-    // Otherwise use fallback provider (read-only)
+    // Priority to wallet provider (MetaMask) if available to ensure we are on the same network
     const p = walletProvider || fallbackProvider;
     return new ethers.Contract(contractAddress, abi.abi, p);
   }, [walletProvider]);

@@ -68,6 +68,31 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ---
 
+## 🌍 Despliegue en Testnet (Sepolia)
+
+Si deseas probar la aplicación en una red pública real:
+
+1.  **Desplegar Contrato**:
+    ```bash
+    cd sc
+    forge script script/Deploy.s.sol:DeployScript \
+      --rpc-url https://ethereum-sepolia-rpc.publicnode.com \
+      --broadcast \
+      --legacy \
+      --private-key <TU_CLAVE_PRIVADA_SEPOLIA>
+    ```
+
+2.  **Configurar Frontend**:
+    Actualiza `dapp/.env.local`:
+    ```env
+    NEXT_PUBLIC_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+    NEXT_PUBLIC_CONTRACT_ADDRESS=<NUEVA_DIRECCION_DEL_CONTRATO>
+    ```
+
+3.  **Reiniciar**: `npm run dev`.
+
+---
+
 ## 🔧 Configuración de MetaMask (Para pruebas manuales)
 
 Para que la app funcione en el navegador:
