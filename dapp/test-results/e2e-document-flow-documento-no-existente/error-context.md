@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "DocuChain Blockchain Document Verification" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - heading "DocuChain" [level=1] [ref=e10]
+          - paragraph [ref=e11]: Blockchain Document Verification
+      - navigation [ref=e12]:
+        - link "Upload & Sign" [ref=e13] [cursor=pointer]:
+          - /url: /upload
+          - generic [ref=e14]:
+            - img [ref=e15]
+            - generic [ref=e17]: Upload & Sign
+        - link "Verify" [ref=e18] [cursor=pointer]:
+          - /url: /verify
+          - generic [ref=e19]:
+            - img [ref=e20]
+            - generic [ref=e22]: Verify
+        - link "History" [ref=e23] [cursor=pointer]:
+          - /url: /history
+          - generic [ref=e24]:
+            - img [ref=e25]
+            - generic [ref=e27]: History
+  - main [ref=e28]:
+    - main [ref=e29]:
+      - heading "Verify Document" [level=1] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: Select Document to Verify
+          - button "Choose File" [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]: Signer Address
+          - textbox "0x..." [ref=e37]: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+        - button "Verify Document" [ref=e38] [cursor=pointer]:
+          - img [ref=e39]
+          - generic [ref=e41]: Verify Document
+        - generic [ref=e43]:
+          - img [ref=e45]
+          - paragraph [ref=e48]: "❌ Error: Failed to fetch"
+  - contentinfo [ref=e49]:
+    - generic [ref=e51]:
+      - paragraph [ref=e52]: © 2024 DocuChain. Powered by Ethereum Blockchain.
+      - generic [ref=e54]: Connected to Anvil
+  - alert [ref=e56]
+```

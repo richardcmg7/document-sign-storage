@@ -40,14 +40,14 @@
             - generic [ref=e44]:
               - img [ref=e46]
               - generic [ref=e48]:
-                - paragraph [ref=e49]: sample.txt
-                - paragraph [ref=e50]: 0.04 KB
+                - paragraph [ref=e49]: second-doc.txt
+                - paragraph [ref=e50]: 0.03 KB
             - generic [ref=e51]: Ready
           - generic [ref=e53]:
             - img [ref=e55]
             - generic [ref=e57]:
               - paragraph [ref=e58]: Document Hash (Keccak256)
-              - paragraph [ref=e59]: "0x97dae00007a0602afca5622c684154f259a4207b737ba8da7682685c5b1547c1"
+              - paragraph [ref=e59]: "0x0fc428cbb890a342fac116445c8580a9594b3254118bc1cf7b3e764063b2580b"
         - generic [ref=e60]:
           - generic [ref=e62]:
             - generic [ref=e63]:
@@ -62,7 +62,7 @@
               - img [ref=e77]
               - generic [ref=e79]:
                 - paragraph [ref=e80]: Digital Signature (ECDSA)
-                - paragraph [ref=e81]: "0x0eece73efc42ce8e2e8303972f64d120fa4579d515d74f2560fd9f51173bda77327e492cf43579035b61df5dc30b8eeb8b5914d6f90110f84f895f5997b74d041c"
+                - paragraph [ref=e81]: "0xcec1d1d46e29d91ff3010bd668f079fb15de342aaae4a475992edcf87267ea015f89f8efbf00477ff25035c7b115301b9e5c2c493095fac69856c45a7f5a8d0d1c"
             - button "Store on Blockchain" [ref=e82] [cursor=pointer]:
               - img [ref=e83]
               - generic [ref=e85]: Store on Blockchain

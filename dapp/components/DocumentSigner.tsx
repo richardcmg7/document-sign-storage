@@ -43,7 +43,7 @@ export default function DocumentSigner({ hash }: { hash: string }) {
         (err?.reason && err.reason.includes('Document already exists')) ||
         (err?.message && err.message.includes('Document already exists'))
       ) {
-        setStatus('⚠️ This document has already been stored on the blockchain.');
+        setStatus('This document has already been stored on the blockchain.');
       } else {
         setStatus('❌ Error storing document: ' + (err?.message || err));
       }
